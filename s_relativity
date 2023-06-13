@@ -1,0 +1,283 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+__author__ = 'SBSoltau'
+__version__ = '1.0.1'
+__description__ = 'Gráficos e Diagramas da Relatividade Especial'
+__Date__ = '2023-06-03'
+
+import numpy as np
+import tkinter as tk
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+
+
+# Constantes
+max_value      = 0.999
+max_resolution = 0.001
+light_vacuo = 1
+v_mov = np.linspace(0, 1, 1000)  # Intervalo de velocidade relativa entre o objeto e o observador de 0 a c (velocidade da luz)
+
+
+def Gamma(beta):
+    if np.allclose(beta * beta, 1):
+       gamma = np.Inf
+    else:
+       gamma = 1 / np.sqrt(1 - (beta * beta))
+    return gamma
+
+
+# Grafico 6
+def Momentum(V_scale):
+    # Momento relativístico
+    m_rep = 1  # massa do objeto em repouso
+    v_rep = 1 # velocidade repouso
+    beta = v_mov/light_vacuo
+    gamma = Gamma(beta)
+    p_mov = (m_rep * v_rep) * gamma
+
+    # Plot do gráfico
+    graph6.clear()
+    graph6.plot(v_mov, p_mov, 'r')
+    graph6.set_xlabel('Velocidade Relativa (c)',fontsize=8)
+    graph6.set_ylabel('Momento Relativístico',fontsize=8)
+    graph6.set_title('Momento em Função da Velocidade Relativa',fontsize=8)
+    graph6.tick_params(axis='x', labelsize=6)
+    graph6.tick_params(axis='y', labelsize=6)
+
+    # plot a point
+    beta = V_scale/light_vacuo
+    gamma = Gamma(beta)
+    p_mov = (m_rep * v_rep) * gamma
+
+    graph6.plot(V_scale, p_mov, 'bo') # blue 'o'
+    canvas6.draw()
+    return
+
+# Grafico 5
+def Mass(V_scale):
+    # Massa relativística
+    m_rep = 1  # massa do objeto em repouso
+    beta = v_mov/light_vacuo
+    gamma = Gamma(beta)
+    m_mov = m_rep * gamma
+
+    # Plot do gráfico
+    graph5.clear()
+    graph5.plot(v_mov, m_mov, 'r')
+    graph5.set_xlabel('Velocidade Relativa (c)',fontsize=8)
+    graph5.set_ylabel('Massa Relativística',fontsize=8)
+    graph5.set_title('Massa em Função da Velocidade Relativa',fontsize=8)
+    graph5.tick_params(axis='x', labelsize=6)
+    graph5.tick_params(axis='y', labelsize=6)
+
+    # plot a point
+    beta = V_scale/light_vacuo
+    gamma = Gamma(beta)
+    m_mov = m_rep * gamma
+
+    graph5.plot(V_scale, m_mov, 'bo') # blue 'o'
+    canvas5.draw()
+    return
+
+# Grafico 4
+def Energy(V_scale):
+    # Energia relativística
+    m_rep = 1  # massa do objeto em repouso
+    beta = v_mov/light_vacuo
+    gamma = Gamma(beta)
+    E_mov = (m_rep * (light_vacuo * light_vacuo)) * gamma
+
+    # Plot do gráfico
+    graph4.clear()
+    graph4.plot(v_mov, E_mov, 'r')
+    graph4.set_xlabel('Velocidade Relativa (c)',fontsize=8)
+    graph4.set_ylabel('Energia Relativística',fontsize=8)
+    graph4.set_title('Energia em Função da Velocidade Relativa',fontsize=8)
+    graph4.tick_params(axis='x', labelsize=6)
+    graph4.tick_params(axis='y', labelsize=6)
+
+    # plot a point
+    beta = V_scale/light_vacuo
+    gamma = Gamma(beta)
+    E_mov = (m_rep * (light_vacuo * light_vacuo)) * gamma
+    graph4.plot(V_scale, E_mov, 'bo') # blue 'o'
+
+    canvas4.draw()
+    return
+
+# Gráfico 3
+def MinkowskiDiagram(V_scale):
+    # Cálculo dos ângulos
+    v_mov = V_scale # c
+    beta = v_mov / light_vacuo
+    theta = np.arctan(beta)
+    phi = (np.pi / 2) - np.arctan(beta)
+
+    # Plot do gráfico
+    graph3.clear()
+
+    # Referencial S
+    graph3.arrow(0, 0, 0.9, 0, color='black', head_width=0.01, head_length=0.03)
+    graph3.annotate('ct', (-0.05,0.94),fontsize=10)
+
+    graph3.arrow(0, 0, 0, 0.9, color='black', head_width=0.01, head_length=0.03)
+    graph3.annotate('x', (0.9,-0.05),fontsize=10)
+
+    # Raio de luz no diagrama de Minkowski
+    graph3.arrow(0, 0, 0.9, 0.9, color='blue', head_width=0.01, head_length=0.03)
+
+    # Referencial S'
+    graph3.arrow(0, 0, np.cos(theta), np.sin(theta), color='red', head_width=0.01, head_length=0.03)
+    graph3.annotate('x\'', (np.cos(theta)+0.03, np.sin(theta)),fontsize=10)
+
+    graph3.arrow(0, 0, np.cos(phi), np.sin(phi), color='red', head_width=0.01, head_length=0.03)
+    graph3.annotate('ct\'', (np.cos(phi)+0.03, np.sin(phi)),fontsize=10)
+
+    # Configurações do gráfico
+    graph3.set_aspect('equal')
+
+    graph3.set_title('Diagrama de Minkowski',fontsize=8) # ou diagrama de espaço-tempo')
+    graph3.set_axis_off() # Remove os eixos
+    graph3.grid(False)  # Removendo o grid
+
+    # Remover moldura
+    graph3.spines['right'].set_visible(False)
+    graph3.spines['top'].set_visible(False)
+    graph3.spines['left'].set_visible(False)
+    graph3.spines['bottom'].set_visible(False)
+
+    canvas3.draw()
+    return
+
+# Gráfico 2
+def DilationTime(V_scale):
+    # Fator de contração de dilatação temporal
+    T_mov = 1
+    beta = v_mov/light_vacuo
+    gamma = Gamma(beta)
+    T_rep = T_mov * gamma
+
+    # Plot do gráfico
+    graph2.clear()
+    graph2.plot(v_mov, T_rep, 'r')
+    graph2.set_xlabel('Velocidade Relativa (c)',fontsize=8)
+    graph2.set_ylabel('Fator de Dilatação Temporal',fontsize=8)
+    graph2.set_title('Dilatação Temporal',fontsize=8)
+    graph2.tick_params(axis='x', labelsize=6)
+    graph2.tick_params(axis='y', labelsize=6)
+
+    # plot a point
+    beta = V_scale/light_vacuo
+    gamma = Gamma(beta)
+    T_rep = T_mov * gamma
+
+    graph2.plot(V_scale, T_rep, 'bo') # blue 'o'
+    canvas2.draw()
+    return
+
+# Gráfico 1
+def LengthContract(V_scale):
+    # Fator de contração de Lorentz
+    L_mov = 1
+    beta = v_mov/light_vacuo
+    gamma = Gamma(beta)
+    L_rep = L_mov / gamma
+
+    # Plot do gráfico
+    graph1.clear()
+    graph1.plot(v_mov, L_rep, 'r')
+    graph1.set_xlabel('Velocidade Relativa (c)',fontsize=8)
+    graph1.set_ylabel('Fator de Contração de Lorentz',fontsize=8)
+    graph1.set_title('Contração de Lorentz',fontsize=8)
+    graph1.tick_params(axis='x', labelsize=6)
+    graph1.tick_params(axis='y', labelsize=6)
+
+    # plot a point
+    beta = V_scale/light_vacuo
+    gamma = Gamma(beta)
+    L_rep = L_mov / gamma
+
+    graph1.plot(V_scale, L_rep, 'bo') # blue 'o'
+    canvas1.draw()
+    return
+
+
+def update_values():
+    velocidade = scale_velocidade.get()
+    #lbl_velocidade.config(text=f"Velocidade: {velocidade}")
+
+    # Atualizar gráficos
+    LengthContract(velocidade)
+    DilationTime(velocidade)
+    MinkowskiDiagram(velocidade)
+    Energy(velocidade)
+    Mass(velocidade)
+    Momentum(velocidade)
+    return
+
+
+# Cria a janela principal
+window = tk.Tk()
+window.title("Relatividade Especial")
+window.geometry("1280x800")
+
+# Cria um container para o gráfico
+graph_container = tk.Frame(window)
+graph_container.pack()
+
+# Cria as figuras e os canvas para os gráficos
+fig1 = Figure(figsize=(4, 3), dpi=100)
+graph1 = fig1.add_subplot(111)  # Gráfico 1
+canvas1 = FigureCanvasTkAgg(fig1, master=graph_container)
+canvas1.draw()
+canvas1.get_tk_widget().grid(row=0, column=0, padx=5, pady=5)
+
+fig2 = Figure(figsize=(4, 3), dpi=100)
+graph2 = fig2.add_subplot(111)  # Gráfico 2
+canvas2 = FigureCanvasTkAgg(fig2, master=graph_container)
+canvas2.draw()
+canvas2.get_tk_widget().grid(row=0, column=1, padx=5, pady=5)
+
+fig3 = Figure(figsize=(4, 3), dpi=100)
+graph3 = fig3.add_subplot(111)  # Gráfico 3
+canvas3 = FigureCanvasTkAgg(fig3, master=graph_container)
+canvas3.draw()
+canvas3.get_tk_widget().grid(row=0, column=2, padx=5, pady=5)
+
+fig4 = Figure(figsize=(4, 3), dpi=100)
+graph4 = fig4.add_subplot(111)  # Gráfico 4
+canvas4 = FigureCanvasTkAgg(fig4, master=graph_container)
+canvas4.draw()
+canvas4.get_tk_widget().grid(row=1, column=0, padx=5, pady=5)
+
+fig5 = Figure(figsize=(4, 3), dpi=100)
+graph5 = fig5.add_subplot(111)  # Gráfico 5
+canvas5 = FigureCanvasTkAgg(fig5, master=graph_container)
+canvas5.draw()
+canvas5.get_tk_widget().grid(row=1, column=1, padx=5, pady=5)
+
+fig6 = Figure(figsize=(4, 3), dpi=100)
+graph6 = fig6.add_subplot(111)  # Gráfico 6
+canvas6 = FigureCanvasTkAgg(fig6, master=graph_container)
+canvas6.draw()
+canvas6.get_tk_widget().grid(row=1, column=2, padx=5, pady=5)
+
+# Cria os componentes Scale
+scale_velocidade = tk.Scale(window, from_=0.0, to=max_value, resolution=max_resolution, label="Velocidade relativa (c)",
+                            orient=tk.HORIZONTAL, length=200)
+
+# Cria as labels para exibir os valores selecionados
+#lbl_velocidade = tk.Label(window, text="Velocidade relativa: 0.0")
+
+# Organiza os componentes na interface
+scale_velocidade.pack(pady=10)
+#lbl_velocidade.pack()
+
+# Define um botão para atualizar os valores selecionados
+btn_atualizar = tk.Button(window, text="Atualizar", command=update_values)
+btn_atualizar.pack(pady=10)
+
+# Inicia o loop principal da interface
+window.mainloop()
