@@ -1,7 +1,6 @@
 # special_relativity
 
-This repository was created to hold the code referenced in "Estudo numérico da Relatividade Especial com simulação
-computacional"
+This repository was created to hold the code referenced in "Estudo da Relatividade Especial com simulação computacional gráfica"
 
 ## Notes
 
